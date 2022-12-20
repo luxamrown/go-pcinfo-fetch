@@ -10,9 +10,15 @@ type GPUInfo struct {
 	GPU string
 }
 
+type MemoryInfo struct {
+	TotalMemory     string
+	AvailableMemory string
+}
+
 type PcInfo struct {
 	SysInfo
 	GPUInfo
+	MemoryInfo
 }
 
 func NewSysInfo(hostName, osName, cpu string) SysInfo {
@@ -28,9 +34,17 @@ func NewGpuInfo(gpu string) GPUInfo {
 	}
 }
 
-func NewPcInfo(SysInfo SysInfo, GPUInfo GPUInfo) PcInfo {
+func NewMemoryInfo(total, avail string) MemoryInfo {
+	return MemoryInfo{
+		TotalMemory:     total,
+		AvailableMemory: avail,
+	}
+}
+
+func NewPcInfo(SysInfo SysInfo, GPUInfo GPUInfo, MemInfo MemoryInfo) PcInfo {
 	return PcInfo{
-		SysInfo: SysInfo,
-		GPUInfo: GPUInfo,
+		SysInfo:    SysInfo,
+		GPUInfo:    GPUInfo,
+		MemoryInfo: MemInfo,
 	}
 }

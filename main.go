@@ -84,9 +84,30 @@ func GetHostAndOsname() (string, string) {
 
 func GetPcInfo() structs.PcInfo {
 	hostName, osName := GetHostAndOsname()
+	totalMem, availMem := GetMemory()
 	cpuName := GetCPUName()
 	gpuName := GetGPUName()
-	return structs.NewPcInfo(structs.NewSysInfo(hostName, osName, cpuName), structs.NewGpuInfo(gpuName))
+	return structs.NewPcInfo(structs.NewSysInfo(hostName, osName, cpuName), structs.NewGpuInfo(gpuName), structs.NewMemoryInfo(totalMem, availMem))
+}
+
+func GetMemory() (string, string) {
+	var outputTotalMem []string
+	var outputAvailMem []string
+	// var outputArray []string
+
+	command := []string{"Total Physical Memory", "Available Physical Memory"}
+	for idx, elem := range command {
+		output := GetCMDOutput("systeminfo", "|", "find", elem)
+		if idx == 0 {
+			outputTotalMem = strings.Split(output, " ")
+			outputTotalMem = utils.SimplifyOutput(outputTotalMem)
+		} else {
+			outputAvailMem = strings.Split(output, " ")
+			outputAvailMem = utils.SimplifyOutput(outputAvailMem)
+		}
+	}
+
+	return strings.Join(outputTotalMem[3:], " "), strings.Join(outputAvailMem[3:], " ")
 }
 
 func main() {
@@ -96,6 +117,6 @@ func main() {
 	fmt.Printf("Host: %s\n", PcInfo.HostName)
 	fmt.Printf("CPU: %s\n", PcInfo.CPU)
 	fmt.Printf("GPU: %s\n", PcInfo.GPU)
+	fmt.Printf("Memory: %s / %s \n", PcInfo.AvailableMemory, PcInfo.TotalMemory)
 	fmt.Println("========================================================")
-
 }
